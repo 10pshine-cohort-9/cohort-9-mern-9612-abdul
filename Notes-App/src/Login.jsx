@@ -1,4 +1,12 @@
+import { useNavigate } from 'react-router-dom';
+
 export default function Login() {
+  const navigate = useNavigate();
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-margin-mobile md:p-margin-desktop antialiased font-body-md">
       <main className="w-full max-w-[420px] surface-white p-xl rounded-md shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant/30 flex flex-col gap-lg">
@@ -10,7 +18,7 @@ export default function Login() {
           <p className="font-body-md text-body-md text-on-surface-variant">Sign in to your Editorial Workspace</p>
         </header>
 
-        <form className="flex flex-col gap-md" onSubmit={(e) => e.preventDefault()}>
+        <form className="flex flex-col gap-md" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-xs">
             <label className="font-label-md text-label-md text-on-background" htmlFor="email">Email address</label>
             <input className="editorial-input font-body-md text-body-md text-on-background w-full" id="email" name="email" placeholder="name@company.com" required type="email"
@@ -30,7 +38,7 @@ export default function Login() {
               Sign In
               <span aria-hidden="true" className="material-symbols-outlined text-sm">arrow_forward</span>
             </button>
-            <button className="btn-secondary font-label-md text-label-md w-full font-medium" type="button">
+            <button className="btn-secondary font-label-md text-label-md w-full font-medium" type="button" onClick={() => navigate('/signup')}>
               Create account
             </button>
           </div>
