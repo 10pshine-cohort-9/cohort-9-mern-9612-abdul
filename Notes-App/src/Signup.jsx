@@ -75,14 +75,6 @@ export default function Signup() {
             </div>
           </div>
         </form>
-        <div className="mt-xl text-center">
-          <p className="font-label-sm text-label-sm text-on-surface-variant">
-            By creating an account, you agree to our{' '}
-            <a className="underline hover:text-on-background transition-colors" href="#">Terms of Service</a>
-            {' '}and{' '}
-            <a className="underline hover:text-on-background transition-colors" href="#">Privacy Policy</a>.
-          </p>
-        </div>
       </main>
     </div>
   );
