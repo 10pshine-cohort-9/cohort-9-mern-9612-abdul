@@ -36,7 +36,8 @@ export default function Signup() {
             <div className="relative">
               <input
                 className="w-full px-[16px] py-[12px] pr-10 bg-surface border border-outline-variant rounded-[12px] font-body-md text-body-md text-on-background placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors"
-                id="password" name="password" placeholder="••••••••" required type={showPassword ? 'text' : 'password'}
+                id="password" name="password" placeholder="••••••••" required minLength={8}
+                type={showPassword ? 'text' : 'password'}
               />
               <button
                 aria-label="Toggle password visibility"
