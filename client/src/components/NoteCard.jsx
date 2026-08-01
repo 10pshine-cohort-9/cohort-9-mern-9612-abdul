@@ -2,28 +2,32 @@ import React from 'react';
 
 const NoteCard = ({ note, onClick, onDelete }) => {
   const handleKeyDown = (e) => {
+    if (e.target !== e.currentTarget) return;
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      onClick(e);
+      onClick();
     }
   };
 
   return (
-    <div 
+    <div
       onClick={onClick}
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="button"
-      className="bg-white border border-outline-variant rounded-[16px] p-lg hover:border-[#76777e] focus:border-primary focus:outline-none transition-colors cursor-pointer group flex flex-col h-[200px]"
+      aria-label={`Open note: ${note.title}`}
+      className="bg-white border border-outline-variant rounded-[16px] p-lg hover:border-[#76777e] focus:outline-none focus:border-primary transition-colors cursor-pointer group flex flex-col h-[200px]"
     >
       <div className="flex justify-between items-start mb-sm gap-2">
-        <h3 className="text-xl font-semibold text-on-background group-hover:text-primary transition-colors line-clamp-1">{note.title}</h3>
+        <h3 className="text-xl font-semibold text-on-background group-hover:text-primary transition-colors line-clamp-1">
+          {note.title}
+        </h3>
         <button 
           onClick={(e) => {
             e.stopPropagation();
             if (onDelete) onDelete(note.id);
           }}
-          className="text-[#76777e] hover:text-[#ba1a1a] focus:text-[#ba1a1a] transition-colors opacity-0 group-hover:opacity-100 group-focus:opacity-100 focus:opacity-100 outline-none"
+          className="relative z-10 text-[#76777e] hover:text-[#ba1a1a] focus:text-[#ba1a1a] transition-colors opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100 outline-none"
           title="Delete Note"
         >
           <span className="material-symbols-outlined text-[20px]">delete</span>

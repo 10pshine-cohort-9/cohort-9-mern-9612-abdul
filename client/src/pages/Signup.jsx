@@ -1,10 +1,19 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const confirmPasswordRef = useRef(null);
+
+  useEffect(() => {
+    if (confirmPasswordRef.current) {
+      confirmPasswordRef.current.setCustomValidity(
+        password === confirmPassword ? "" : "Passwords do not match"
+      );
+    }
+  }, [password, confirmPassword]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -70,10 +79,8 @@ export default function Signup() {
               className="w-full px-[16px] py-[12px] bg-white border border-outline-variant font-body-md text-body-md text-on-background placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors"
               id="confirmPassword" name="confirmPassword" placeholder="••••••••" required type="password" minLength={8}
               value={confirmPassword}
-              onChange={(e) => {
-                setConfirmPassword(e.target.value);
-                e.target.setCustomValidity(password === e.target.value ? "" : "Passwords do not match");
-              }}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              ref={confirmPasswordRef}
             />
           </div>
           <div className="pt-sm space-y-md">
