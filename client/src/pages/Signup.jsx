@@ -19,14 +19,14 @@ export default function Signup() {
           <div className="space-y-sm">
             <label className="block font-label-md text-label-md text-on-background" htmlFor="fullName">Full Name</label>
             <input
-              className="w-full px-[16px] py-[12px] bg-surface border border-outline-variant rounded-[12px] font-body-md text-body-md text-on-background placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors"
+              className="w-full px-[16px] py-[12px] bg-surface border border-outline-variant font-body-md text-body-md text-on-background placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors"
               id="fullName" name="fullName" placeholder="Jane Doe" required type="text"
             />
           </div>
           <div className="space-y-sm">
             <label className="block font-label-md text-label-md text-on-background" htmlFor="email">Email</label>
             <input
-              className="w-full px-[16px] py-[12px] bg-surface border border-outline-variant rounded-[12px] font-body-md text-body-md text-on-background placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors"
+              className="w-full px-[16px] py-[12px] bg-surface border border-outline-variant font-body-md text-body-md text-on-background placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors"
               id="email" name="email" placeholder="jane@example.com" required type="email"
             />
           </div>
@@ -35,7 +35,7 @@ export default function Signup() {
             <label className="block font-label-md text-label-md text-on-background" htmlFor="password">Password</label>
             <div className="relative">
               <input
-                className="w-full px-[16px] py-[12px] pr-10 bg-surface border border-outline-variant rounded-[12px] font-body-md text-body-md text-on-background placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors"
+                className="w-full px-[16px] py-[12px] pr-10 bg-surface border border-outline-variant font-body-md text-body-md text-on-background placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors"
                 id="password" name="password" placeholder="••••••••" required minLength={8}
                 type={showPassword ? 'text' : 'password'}
               />
@@ -55,13 +55,13 @@ export default function Signup() {
           <div className="space-y-sm">
             <label className="block font-label-md text-label-md text-on-background" htmlFor="confirmPassword">Confirm Password</label>
             <input
-              className="w-full px-[16px] py-[12px] bg-surface border border-outline-variant rounded-[12px] font-body-md text-body-md text-on-background placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors"
+              className="w-full px-[16px] py-[12px] bg-surface border border-outline-variant font-body-md text-body-md text-on-background placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors"
               id="confirmPassword" name="confirmPassword" placeholder="••••••••" required type="password"
             />
           </div>
           <div className="pt-sm space-y-md">
             <button
-              className="w-full bg-primary-container text-on-primary py-[12px] px-lg rounded-[12px] font-label-md text-label-md hover:opacity-90 active:opacity-100 transition-opacity"
+              className="w-full bg-primary-container text-on-primary py-[12px] px-lg rounded-sm font-label-md text-label-md hover:opacity-90 active:opacity-100 transition-opacity"
               type="submit"
             >
               Create Account

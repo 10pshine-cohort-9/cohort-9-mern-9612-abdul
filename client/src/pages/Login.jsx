@@ -34,9 +34,8 @@ export default function Login() {
           </div>
 
           <div className="flex flex-col gap-md mt-sm">
-            <button className="btn-primary font-label-md text-label-md w-full font-semibold flex justify-center items-center gap-sm" type="submit">
+            <button className="w-full bg-primary-container text-on-primary py-[12px] px-lg rounded-sm font-label-md text-label-md hover:opacity-90 active:opacity-100 transition-opacity" type="submit">
               Sign In
-              <span aria-hidden="true" className="material-symbols-outlined text-sm">arrow_forward</span>
             </button>
             <button className="btn-secondary font-label-md text-label-md w-full font-medium" type="button" onClick={() => navigate('/signup')}>
               Create account
