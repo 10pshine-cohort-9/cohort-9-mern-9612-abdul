@@ -41,13 +41,9 @@ const Dashboard = () => {
   }, []);
 
   const handleCreateNote = () => {
- 
-    navigate('/editor/new');
   };
 
   const handleEditNote = (noteId) => {
-  
-    navigate(`/editor/${noteId}`);
   };
 
   const handleDeleteNote = (noteId) => {
@@ -56,7 +52,6 @@ const Dashboard = () => {
 
   return (
     <div className="font-body-md text-body-md text-on-background antialiased flex h-screen overflow-hidden bg-[#fbf8fb]">
-  
       <div className="flex-1 flex flex-col w-full">
         <header className="h-16 w-full sticky top-0 z-40 bg-[#fbf8fb] border-b border-outline-variant flex justify-between items-center px-4 md:px-8 shadow-none">
           <div className="flex items-center gap-lg">
