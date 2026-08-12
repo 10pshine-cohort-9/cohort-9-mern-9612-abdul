@@ -5,13 +5,13 @@ const SALT_ROUNDS = 10;
 const MIN_PASSWORD_LENGTH = 8;
 
 function validateRegistrationInput(name, email, password) {
-  if (!name || name.trim() === '') {
+  if (typeof name !== 'string' || name.trim() === '') {
     return 'Name is required.';
   }
-  if (!email || email.trim() === '') {
+  if (typeof email !== 'string' || email.trim() === '') {
     return 'Email is required.';
   }
-  if (!password || password.trim() === '') {
+  if (typeof password !== 'string' || password.trim() === '') {
     return 'Password is required.';
   }
 
@@ -46,7 +46,19 @@ export async function registerUser(name, email, password) {
 
   const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-  const newUser = await createUser(name.trim(), normalizedEmail, hashedPassword);
+  let newUser;
+  try {
+    newUser = await createUser(name.trim(), normalizedEmail, hashedPassword);
+  } catch (error) {
+    if (error.code === '23505') {
+      const conflictError = new Error(
+        'An account with this email already exists.'
+      );
+      conflictError.status = 409;
+      throw conflictError;
+    }
+    throw error;
+  }
 
   return newUser;
 }
