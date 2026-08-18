@@ -1,5 +1,6 @@
 import express from 'express';
 import authRouter from './routes/auth.routes.js';
+import notesRouter from './routes/notes.routes.js';
 
 const app = express();
 
@@ -14,5 +15,6 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRouter);
+app.use('/api/notes', notesRouter);
 
 export default app;
