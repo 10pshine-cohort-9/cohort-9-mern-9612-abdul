@@ -1,4 +1,5 @@
 import express from 'express';
+import authRouter from './routes/auth.routes.js';
 
 const app = express();
 
@@ -11,5 +12,7 @@ app.get('/', (req, res) => {
     message: "Notes App Backend is running."
   });
 });
+
+app.use('/api/auth', authRouter);
 
 export default app;
