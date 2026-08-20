@@ -34,7 +34,9 @@ export async function findNoteByIdAndUser(id, userId) {
 export async function updateNoteByIdAndUser(id, userId, title, content) {
   const result = await pool.query(
     `UPDATE notes
-     SET title = $1, content = $2
+     SET title = $1,
+         content = $2,
+         updated_at = CURRENT_TIMESTAMP
      WHERE id = $3 AND user_id = $4
      RETURNING id, user_id, title, content, created_at, updated_at`,
     [title, content, id, userId]

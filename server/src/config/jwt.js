@@ -9,6 +9,11 @@ if (!JWT_SECRET || JWT_SECRET.trim() === '') {
   process.exit(1);
 }
 
+if (Buffer.byteLength(JWT_SECRET, 'utf8') < 32) {
+  logger.error('JWT configuration error: JWT_SECRET must be at least 32 bytes for HS256.');
+  process.exit(1);
+}
+
 if (!JWT_EXPIRES_IN || JWT_EXPIRES_IN.trim() === '') {
   logger.error('JWT configuration error: missing or empty environment variable JWT_EXPIRES_IN.');
   process.exit(1);

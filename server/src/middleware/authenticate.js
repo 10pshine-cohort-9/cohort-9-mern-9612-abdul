@@ -13,25 +13,31 @@ export async function authenticate(req, res, next) {
 
   const token = authHeader.slice(7);
 
+  let payload;
   try {
-    const payload = jwt.verify(token, jwtSecret);
-
-    if (typeof payload.jti !== 'string' || payload.jti.trim() === '' ||
-        typeof payload.exp !== 'number' || !isFinite(payload.exp)) {
-      logger.warn({ method: req.method, url: req.url }, 'Authentication failed: invalid token payload.');
-      return res.status(401).json({ message: 'Invalid or expired token.' });
-    }
-
-    if (await isTokenRevoked(payload.jti)) {
-      logger.warn({ userId: payload.id, method: req.method, url: req.url }, 'Authentication failed: revoked token.');
-      return res.status(401).json({ message: 'Invalid or expired token.' });
-    }
-
-    req.user = { id: payload.id, jti: payload.jti, tokenExp: payload.exp };
-    next();
+    payload = jwt.verify(token, jwtSecret);
   } catch {
     logger.warn({ method: req.method, url: req.url }, 'Authentication failed: token verification error.');
     return res.status(401).json({ message: 'Invalid or expired token.' });
   }
+
+  if (typeof payload.jti !== 'string' || payload.jti.trim() === '' ||
+      typeof payload.exp !== 'number' || !isFinite(payload.exp)) {
+    logger.warn({ method: req.method, url: req.url }, 'Authentication failed: invalid token payload.');
+    return res.status(401).json({ message: 'Invalid or expired token.' });
+  }
+
+  try {
+    if (await isTokenRevoked(payload.jti)) {
+      logger.warn({ userId: payload.id, method: req.method, url: req.url }, 'Authentication failed: revoked token.');
+      return res.status(401).json({ message: 'Invalid or expired token.' });
+    }
+  } catch (err) {
+    return next(err);
+  }
+
+  req.user = { id: payload.id, jti: payload.jti, tokenExp: payload.exp };
+  next();
 }
+
 

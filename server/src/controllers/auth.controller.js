@@ -7,7 +7,7 @@ export async function register(req, res) {
 
     const user = await registerUser(name, email, password);
 
-    logger.info({ userId: user.id, email: user.email }, 'User registered successfully.');
+    logger.info({ userId: user.id }, 'User registered successfully.');
 
     return res.status(201).json({
       message: 'User registered successfully.',
@@ -36,7 +36,7 @@ export async function login(req, res) {
 
     const { token, user } = await loginUser(email, password);
 
-    logger.info({ userId: user.id, email: user.email }, 'User logged in successfully.');
+    logger.info({ userId: user.id }, 'User logged in successfully.');
 
     return res.status(200).json({
       message: 'Login successful.',
