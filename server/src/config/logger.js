@@ -8,6 +8,7 @@ const logger = pino({
   redact: {
     paths: [
       'password',
+      'token',
       'req.headers.authorization',
       '*.password',
       '*.token',
