@@ -7,23 +7,7 @@ import {
 } from '../services/notes.service.js';
 import logger from '../config/logger.js';
 
-function handleError(res, error, context) {
-  const status = error.status || 500;
-  const message =
-    status === 500
-      ? 'An unexpected error occurred. Please try again later.'
-      : error.message;
-
-  if (status === 500) {
-    logger.error({ err: error, ...context }, 'Unexpected error in notes operation.');
-  } else {
-    logger.warn({ status, message, ...context }, 'Notes operation failed.');
-  }
-
-  return res.status(status).json({ message });
-}
-
-export async function createNoteHandler(req, res) {
+export async function createNoteHandler(req, res, next) {
   try {
     const userId = req.user.id;
     const { title, content } = req.body ?? {};
@@ -37,11 +21,11 @@ export async function createNoteHandler(req, res) {
       note,
     });
   } catch (error) {
-    return handleError(res, error, { userId: req.user?.id, operation: 'createNote' });
+    return next(error);
   }
 }
 
-export async function getAllNotesHandler(req, res) {
+export async function getAllNotesHandler(req, res, next) {
   try {
     const userId = req.user.id;
 
@@ -54,11 +38,11 @@ export async function getAllNotesHandler(req, res) {
       notes,
     });
   } catch (error) {
-    return handleError(res, error, { userId: req.user?.id, operation: 'getAllNotes' });
+    return next(error);
   }
 }
 
-export async function getSingleNoteHandler(req, res) {
+export async function getSingleNoteHandler(req, res, next) {
   try {
     const userId = req.user.id;
     const { id } = req.params;
@@ -72,11 +56,11 @@ export async function getSingleNoteHandler(req, res) {
       note,
     });
   } catch (error) {
-    return handleError(res, error, { userId: req.user?.id, noteId: req.params?.id, operation: 'getNote' });
+    return next(error);
   }
 }
 
-export async function updateNoteHandler(req, res) {
+export async function updateNoteHandler(req, res, next) {
   try {
     const userId = req.user.id;
     const { id } = req.params;
@@ -91,11 +75,11 @@ export async function updateNoteHandler(req, res) {
       note,
     });
   } catch (error) {
-    return handleError(res, error, { userId: req.user?.id, noteId: req.params?.id, operation: 'updateNote' });
+    return next(error);
   }
 }
 
-export async function deleteNoteHandler(req, res) {
+export async function deleteNoteHandler(req, res, next) {
   try {
     const userId = req.user.id;
     const { id } = req.params;
@@ -106,7 +90,6 @@ export async function deleteNoteHandler(req, res) {
 
     return res.status(200).json({ message: 'Note deleted successfully.' });
   } catch (error) {
-    return handleError(res, error, { userId: req.user?.id, noteId: req.params?.id, operation: 'deleteNote' });
+    return next(error);
   }
 }
-
