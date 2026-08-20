@@ -18,6 +18,15 @@ CREATE TABLE notes (
 
 CREATE INDEX notes_user_id_idx ON notes (user_id);
 
+CREATE TABLE revoked_tokens (
+    id SERIAL PRIMARY KEY,
+    jti VARCHAR(255) UNIQUE NOT NULL,
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    revoked_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX revoked_tokens_jti_idx ON revoked_tokens (jti);
+
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
