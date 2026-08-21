@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Signup() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -20,87 +21,106 @@ export default function Signup() {
     if (password !== confirmPassword) {
       return;
     }
-
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-margin-mobile md:p-margin-desktop antialiased font-body-md">
-      <main className="w-full max-w-[440px] bg-white rounded-xl border border-outline-variant p-xl shadow-[0px_1px_2px_rgba(0,0,0,0.05),_0px_4px_12px_rgba(0,0,0,0.05)]">
-        <header className="text-center mb-xl">
-          <div className="h-12 w-12 bg-primary-container rounded flex items-center justify-center text-on-primary mb-sm mx-auto">
-            <span aria-hidden="true" className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>edit_square</span>
+    <div className="h-screen overflow-hidden flex antialiased font-body-md bg-background">
+      {/* Left Branding Panel */}
+      <div className="hidden lg:flex lg:w-1/2 lg:shrink-0 bg-sidebar flex-col items-center justify-center p-12 relative border-r border-sidebar-border/30">
+        <div className="flex flex-col items-center text-center w-full">
+          <div className="flex items-center justify-center gap-3 mb-10">
+            <div className="w-12 h-12 rounded-editorial bg-primary flex items-center justify-center text-on-primary font-bold text-2xl shadow-subtle">
+              S
+            </div>
+            <span className="font-headline-lg text-3xl font-bold tracking-tight text-sidebar-text">
+              SHINE Notes
+            </span>
           </div>
-          <h1 className="font-headline-lg text-headline-lg text-on-background mb-xs">Start writing</h1>
-          <p className="font-body-md text-body-md text-on-surface-variant">Join our community of professionals.</p>
-        </header>
+          
+          <h2 className="font-headline-lg text-5xl font-bold leading-tight text-sidebar-text mb-6">
+            Start your creative journey.
+          </h2>
+          
+          <p className="font-body-md text-sidebar-muted text-lg">
+            Join thousands of writers, editors, and creators who use SHINE to bring their best ideas to life.
+          </p>
+        </div>
+      </div>
 
-        <form className="space-y-lg" onSubmit={handleSubmit}>
-          <div className="space-y-sm">
-            <label className="block font-label-md text-label-md text-on-background" htmlFor="fullName">Full Name</label>
-            <input
-              className="w-full px-[16px] py-[12px] bg-white border border-outline-variant font-body-md text-body-md text-on-background placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors"
-              id="fullName" name="fullName" placeholder="Jane Doe" required type="text"
-            />
-          </div>
-          <div className="space-y-sm">
-            <label className="block font-label-md text-label-md text-on-background" htmlFor="email">Email</label>
-            <input
-              className="w-full px-[16px] py-[12px] bg-white border border-outline-variant font-body-md text-body-md text-on-background placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors"
-              id="email" name="email" placeholder="jane@example.com" required type="email"
-            />
-          </div>
+      {/* Right Signup Panel */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 overflow-y-auto relative z-10 bg-background">
+        <main className="w-full max-w-[400px] flex flex-col py-8">
+          <header className="flex flex-col mb-10">
+            <h1 className="font-headline-lg text-4xl font-bold text-on-surface tracking-tight mb-2">Create an account</h1>
+            <p className="font-body-md text-xl font-semibold text-on-surface-variant">Start your writing journey today.</p>
+          </header>
 
-          <div className="space-y-sm">
-            <label className="block font-label-md text-label-md text-on-background" htmlFor="password">Password</label>
-            <div className="relative">
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-1 ">
+              <label className="font-label-md text-on-surface" htmlFor="fullName">Full Name</label>
               <input
-                className="w-full px-[16px] py-[12px] pr-10 bg-white border border-outline-variant font-body-md text-body-md text-on-background placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors"
-                id="password" name="password" placeholder="••••••••" required minLength={8}
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 bg-surface border border-outline rounded-editorial font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all"
+                id="fullName" name="fullName" placeholder="Jane Doe" required type="text"
               />
+            </div>
+            
+            <div className="flex flex-col gap-2">
+              <label className="font-label-md text-on-surface" htmlFor="email">Email</label>
+              <input
+                className="w-full px-4 py-3 bg-surface border border-outline rounded-editorial font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all"
+                id="email" name="email" placeholder="jane@example.com" required type="email"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="font-label-md text-on-surface" htmlFor="password">Password</label>
+              <div className="relative">
+                <input
+                  className="w-full px-4 py-3 pr-10 bg-surface border border-outline rounded-editorial font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all"
+                  id="password" name="password" placeholder="••••••••" required minLength={8}
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  aria-label="Toggle password visibility"
+                  className="absolute inset-y-0 right-0 px-3 flex items-center text-on-surface-variant hover:text-on-surface transition-colors"
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                >
+                  <span className="material-symbols-outlined text-[18px]">
+                    {showPassword ? 'visibility' : 'visibility_off'}
+                  </span>
+                </button>
+              </div>
+              <p className="font-label-sm text-on-surface-variant mt-1 text-xs">Must be at least 8 characters.</p>
+            </div>
+            
+            <div className="flex flex-col gap-2">
+              <label className="font-label-md text-on-surface" htmlFor="confirmPassword">Confirm Password</label>
+              <input
+                className="w-full px-4 py-3 bg-surface border border-outline rounded-editorial font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all"
+                id="confirmPassword" name="confirmPassword" placeholder="••••••••" required type="password" minLength={8}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                ref={confirmPasswordRef}
+              />
+            </div>
+            
+            <div className="flex flex-col gap-3 mt-4">
               <button
-                aria-label="Toggle password visibility"
-                className="absolute inset-y-0 right-0 px-3 flex items-center text-on-surface-variant hover:text-on-background transition-colors"
-                type="button"
-                onClick={() => setShowPassword((v) => !v)}
+                className="w-full bg-primary text-on-primary py-3 px-6 rounded-editorial font-label-md hover:bg-primary-hover active:scale-[0.99] transition-all shadow-subtle"
+                type="submit"
               >
-                <span className="material-symbols-outlined text-[20px]">
-                  {showPassword ? 'visibility' : 'visibility_off'}
-                </span>
+                Create Account
+              </button>
+              <button className="w-full bg-surface text-on-surface py-3 px-6 rounded-editorial border border-outline hover:bg-background active:scale-[0.99] transition-all font-label-md" type="button" onClick={() => navigate('/login')}>
+                Sign in instead
               </button>
             </div>
-            <p className="font-label-sm text-label-sm text-on-surface-variant mt-xs">Must be at least 8 characters.</p>
-          </div>
-          <div className="space-y-sm">
-            <label className="block font-label-md text-label-md text-on-background" htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              className="w-full px-[16px] py-[12px] bg-white border border-outline-variant font-body-md text-body-md text-on-background placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors"
-              id="confirmPassword" name="confirmPassword" placeholder="••••••••" required type="password" minLength={8}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              ref={confirmPasswordRef}
-            />
-          </div>
-          <div className="pt-sm space-y-md">
-            <button
-              className="w-full bg-primary-container text-on-primary py-[12px] px-lg rounded-sm font-label-md text-label-md hover:opacity-90 active:opacity-100 transition-opacity"
-              type="submit"
-            >
-              Create Account
-            </button>
-            <div className="text-center">
-              <Link
-                className="inline-block font-label-md text-label-md text-on-surface-variant hover:text-on-background transition-colors"
-                to="/login"
-              >
-                Sign in instead
-              </Link>
-            </div>
-          </div>
-        </form>
-      </main>
+          </form>
+        </main>
+      </div>
     </div>
   );
 }

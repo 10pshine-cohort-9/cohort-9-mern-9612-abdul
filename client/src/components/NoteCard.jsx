@@ -16,10 +16,12 @@ const NoteCard = ({ note, onClick, onDelete }) => {
       tabIndex={0}
       role="button"
       aria-label={`Open note: ${note.title}`}
-      className="bg-white border border-outline-variant rounded-sm p-lg hover:border-[#76777e] focus:outline-none focus:border-primary transition-colors cursor-pointer group flex flex-col h-[200px]"
+      className="bg-dusty-denim/10 backdrop-blur-sm border border-outline/40 rounded-[20px] p-7 hover:shadow-floating hover:-translate-y-1.5 focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary/50 transition-all duration-300 ease-out cursor-pointer group flex flex-col h-[260px] relative overflow-hidden"
     >
-      <div className="flex justify-between items-start mb-sm gap-2">
-        <h3 className="text-xl font-semibold text-on-background group-hover:text-primary transition-colors line-clamp-1">
+      <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-primary/10 via-primary/30 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      
+      <div className="flex justify-between items-start mb-4 gap-4">
+        <h3 className="font-headline-lg-mobile text-[22px] text-on-surface group-hover:text-primary transition-colors line-clamp-1 tracking-tight font-extrabold">
           {note.title}
         </h3>
         <button 
@@ -27,23 +29,33 @@ const NoteCard = ({ note, onClick, onDelete }) => {
             e.stopPropagation();
             if (onDelete) onDelete(note.id);
           }}
-          className="relative z-10 text-[#76777e] hover:text-[#ba1a1a] focus:text-[#ba1a1a] transition-colors opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100 outline-none"
+          className="relative z-10 text-on-surface-variant/60 hover:text-danger hover:bg-danger/10 focus:text-danger focus:bg-danger/10 transition-all opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100 outline-none rounded-full p-2"
           title="Delete Note"
         >
-          <span className="material-symbols-outlined text-[20px]">delete</span>
+          <span className="material-symbols-outlined text-[18px]">delete</span>
         </button>
       </div>
-      <p className="font-body-md text-body-md text-on-surface-variant line-clamp-2 flex-1">
+      
+      <p className="font-body-md text-[15px] text-on-surface-variant line-clamp-4 flex-1 mt-1 leading-[1.6]">
         {note.excerpt || note.content}
       </p>
-      <div className="flex items-center justify-between mt-auto pt-md border-t border-[#e4e2e4]">
-        <span className="font-label-sm text-label-sm text-[#76777e]">Edited {note.updatedAt}</span>
-        <div className="flex gap-xs">
-          {note.tags?.map(tag => (
-            <span key={tag} className="px-sm py-[2px] bg-[#f0edf0] rounded-full font-label-sm text-label-sm text-on-surface-variant border border-outline-variant">
+      
+      <div className="flex items-center justify-between mt-auto pt-6 border-t border-outline/30">
+        <span className="font-label-sm text-[13px] text-on-surface-variant/70 flex items-center gap-1.5 font-medium">
+          <span className="material-symbols-outlined text-[16px]">calendar_today</span>
+          {note.updatedAt}
+        </span>
+        <div className="flex gap-2 flex-wrap justify-end">
+          {note.tags?.slice(0, 3).map(tag => (
+            <span key={tag} className="px-3 py-1 bg-primary/10 rounded-full font-label-sm text-[11px] uppercase tracking-wider text-primary font-bold">
               {tag}
             </span>
           ))}
+          {note.tags?.length > 3 && (
+            <span className="px-2 py-1 bg-surface border border-outline/40 rounded-full font-label-sm text-[11px] text-on-surface-variant font-bold">
+              +{note.tags.length - 3}
+            </span>
+          )}
         </div>
       </div>
     </div>

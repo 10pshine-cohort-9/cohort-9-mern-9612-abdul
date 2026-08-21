@@ -1,48 +1,92 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-margin-mobile md:p-margin-desktop antialiased font-body-md">
-      <main className="w-full max-w-[420px] bg-white p-xl rounded-md shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant/30 flex flex-col gap-lg">
-        <header className="flex flex-col items-center text-center gap-sm mb-md">
-          <div className="h-12 w-12 bg-primary-container rounded flex items-center justify-center text-on-primary mb-sm">
-            <span aria-hidden="true" className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>edit_square</span>
-          </div>
-          <h1 className="font-headline-lg text-headline-lg text-primary md:font-headline-lg md:text-headline-lg font-headline-lg-mobile text-headline-lg-mobile">Welcome back</h1>
-          <p className="font-body-md text-body-md text-on-surface-variant">Sign in to your Editorial Workspace</p>
-        </header>
-
-        <form className="flex flex-col gap-md" onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-xs">
-            <label className="font-label-md text-label-md text-on-background" htmlFor="email">Email address</label>
-            <input className="px-[16px] py-[12px] bg-white border border-outline-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors font-body-md text-body-md text-on-background w-full" id="email" name="email" placeholder="name@company.com" required type="email"
-              autoComplete="email" />
-          </div>
-
-          <div className="flex flex-col gap-xs">
-            <div className="flex justify-between items-center">
-              <label className="font-label-md text-label-md text-on-background" htmlFor="password">Password</label>
+    <div className="h-screen overflow-hidden flex antialiased font-body-md bg-background">
+      {/* Left Branding Panel */}
+      <div className="hidden lg:flex lg:w-1/2 lg:shrink-0 bg-sidebar flex-col items-center justify-center p-12 relative border-r border-sidebar-border/30">
+        <div className="flex flex-col items-center text-center w-full">
+          <div className="flex items-center justify-center gap-3 mb-10">
+            <div className="w-12 h-12 rounded-editorial bg-primary flex items-center justify-center text-on-primary font-bold text-2xl shadow-subtle">
+              S
             </div>
-            <input className="px-[16px] py-[12px] bg-white border border-outline-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-colors font-body-md text-body-md text-on-background w-full" id="password" name="password" placeholder="••••••••" required type="password"
-              autoComplete="current-password" />
+            <span className="font-headline-lg text-3xl font-bold tracking-tight text-sidebar-text">
+              SHINE Notes
+            </span>
           </div>
+                    
+          <h2 className="font-headline-lg text-5xl font-bold leading-tight text-sidebar-text mb-6">
+            Welcome back to your workspace.
+          </h2>
 
-          <div className="flex flex-col gap-md mt-sm">
-            <button className="w-full bg-primary-container text-on-primary py-[12px] px-lg rounded-sm font-label-md text-label-md hover:opacity-90 active:opacity-100 transition-opacity" type="submit">
-              Sign In
-            </button>
-            <button className="w-full bg-white text-primary py-[12px] px-lg rounded-sm border border-outline-variant hover:bg-[#f5f3f5] transition-colors font-label-md text-label-md font-medium" type="button" onClick={() => navigate('/signup')}>
-              Create account
-            </button>
-          </div>
-        </form>
-      </main>
+          <p className="font-body-md text-sidebar-muted text-lg">
+            Pick up right where you left off. Continue crafting your ideas with the ultimate editorial experience.
+          </p>
+        </div>
+      </div>
+
+      {/* Right Login Panel */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 relative z-10 bg-background overflow-y-auto">
+        <main className="w-full max-w-[400px] flex flex-col py-8">
+          <header className="flex flex-col mb-10">
+            <h1 className="font-headline-lg text-5xl font-bold text-on-surface tracking-tight mb-2">Welcome back</h1>
+            <p className="font-body-md text-2xl font-semibold text-on-surface-variant">Sign in to your SHINE account</p>
+          </header>
+
+          <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-2">
+              <label className="font-label-md text-on-surface" htmlFor="email">Email address</label>
+              <input className="px-4 py-3 bg-surface border border-outline rounded-editorial focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all font-body-md text-on-surface w-full placeholder:text-on-surface-variant/50" id="email" name="email" placeholder="name@company.com" required type="email"
+                autoComplete="email" />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between items-center">
+                <label className="font-label-md text-on-surface" htmlFor="password">Password</label>
+                <a href="#" className="font-label-sm text-primary hover:text-primary-hover transition-colors">Forgot password?</a>
+              </div>
+              <div className="relative">
+                <input
+                  className="w-full px-4 py-3 pr-10 bg-surface border border-outline rounded-editorial font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all"
+                  id="password"
+                  name="password"
+                  placeholder="••••••••"
+                  required
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                />
+                <button
+                  aria-label="Toggle password visibility"
+                  className="absolute inset-y-0 right-0 px-3 flex items-center text-on-surface-variant hover:text-on-surface transition-colors"
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                >
+                  <span className="material-symbols-outlined text-[18px]">
+                    {showPassword ? 'visibility' : 'visibility_off'}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3 mt-4">
+              <button className="w-full bg-primary text-on-primary py-3 px-6 rounded-editorial font-label-md hover:bg-primary-hover active:scale-[0.99] transition-all shadow-subtle" type="submit">
+                Sign In
+              </button>
+              <button className="w-full bg-surface text-on-surface py-3 px-6 rounded-editorial border border-outline hover:bg-background active:scale-[0.99] transition-all font-label-md" type="button" onClick={() => navigate('/signup')}>
+                Create an account
+              </button>
+            </div>
+          </form>
+        </main>
+      </div>
     </div>
   );
 }
