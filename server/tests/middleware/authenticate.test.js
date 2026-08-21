@@ -11,22 +11,26 @@ describe('JWT Authentication Middleware', () => {
   let userId;
 
   before(async () => {
-    await cleanDatabase();
+    try {
+      await cleanDatabase();
 
-    const testUser = {
-      name: 'Middleware Test User',
-      email: 'middleware@example.com',
-      password: 'ValidPass123',
-    };
+      const testUser = {
+        name: 'Middleware Test User',
+        email: 'middleware@example.com',
+        password: 'ValidPass123',
+      };
 
-    await request(app).post('/api/auth/register').send(testUser);
+      await request(app).post('/api/auth/register').send(testUser);
 
-    const loginRes = await request(app)
-      .post('/api/auth/login')
-      .send({ email: testUser.email, password: testUser.password });
+      const loginRes = await request(app)
+        .post('/api/auth/login')
+        .send({ email: testUser.email, password: testUser.password });
 
-    validToken = loginRes.body.token;
-    userId = loginRes.body.user.id;
+      validToken = loginRes.body.token;
+      userId = loginRes.body.user.id;
+    } catch (error) {
+      throw new Error('Failed to setup test user in before hook', { cause: error });
+    }
   });
 
   it('should reject request with no Authorization header', async () => {
@@ -95,17 +99,31 @@ describe('JWT Authentication Middleware', () => {
     expect(res.body.message).to.include('Invalid or expired token');
   });
 
-  it('should reject request with a JWT missing the id claim', async () => {
-    const noIdToken = jwt.sign({ jti: 'no-id-jti' }, JWT_SECRET, {
-      expiresIn: '1h',
+  const invalidIds = [
+    { description: 'missing id', payload: { jti: 'inv-id-jti' } },
+    { description: 'zero id', payload: { id: 0, jti: 'inv-id-jti' } },
+    { description: 'negative id', payload: { id: -1, jti: 'inv-id-jti' } },
+    { description: 'fractional id', payload: { id: 1.5, jti: 'inv-id-jti' } },
+    { description: 'string id', payload: { id: '1', jti: 'inv-id-jti' } },
+  ];
+
+  invalidIds.forEach(({ description, payload }) => {
+    it(`should reject request with a JWT with a ${description}`, async () => {
+      try {
+        const invalidToken = jwt.sign(payload, JWT_SECRET, {
+          expiresIn: '1h',
+        });
+
+        const res = await request(app)
+          .get('/api/notes')
+          .set('Authorization', `Bearer ${invalidToken}`);
+
+        expect(res.status).to.equal(401);
+        expect(res.body.message).to.equal('Invalid or expired token.');
+      } catch (error) {
+        throw new Error(`Failed to test JWT rejection for ${description}`, { cause: error });
+      }
     });
-
-    const res = await request(app)
-      .get('/api/notes')
-      .set('Authorization', `Bearer ${noIdToken}`);
-
-    expect(res.status).to.equal(401);
-    expect(res.body.message).to.equal('Invalid or expired token.');
   });
 
   it('should reject request with a revoked token', async () => {
