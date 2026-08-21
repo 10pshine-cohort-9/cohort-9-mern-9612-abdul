@@ -1,5 +1,6 @@
 import pg from 'pg';
 import 'dotenv/config';
+import logger from './logger.js';
 
 const { Pool } = pg;
 
@@ -35,10 +36,10 @@ try {
   });
 
   pool.on('error', (err) => {
-    console.error('Unexpected error on idle PostgreSQL client:', err.message);
+    logger.error({ err }, 'Unexpected error on idle PostgreSQL client.');
   });
 } catch (error) {
-  console.error('Database Configuration Error:', error.message);
+  logger.error({ err: error }, 'Database configuration error.');
   process.exit(1);
 }
 

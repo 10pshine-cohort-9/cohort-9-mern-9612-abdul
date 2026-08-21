@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import pg from 'pg';
+import logger from '../config/logger.js';
 
 const pool = new pg.Pool({
   host: process.env.DB_HOST,
@@ -9,15 +10,19 @@ const pool = new pg.Pool({
   password: process.env.DB_PASSWORD,
 });
 
-await pool.query(`
-  CREATE TABLE IF NOT EXISTS revoked_tokens (
-    id SERIAL PRIMARY KEY,
-    jti VARCHAR(255) UNIQUE NOT NULL,
-    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
-    revoked_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-  );
-  CREATE INDEX IF NOT EXISTS revoked_tokens_jti_idx ON revoked_tokens (jti);
-`);
+try {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS revoked_tokens (
+      id SERIAL PRIMARY KEY,
+      jti VARCHAR(255) UNIQUE NOT NULL,
+      expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+      revoked_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS revoked_tokens_jti_idx ON revoked_tokens (jti);
+  `);
 
-console.log('revoked_tokens table ready.');
-await pool.end();
+  logger.info('revoked_tokens table ready.');
+} finally {
+  await pool.end();
+}
+
