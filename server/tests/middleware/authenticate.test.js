@@ -95,6 +95,19 @@ describe('JWT Authentication Middleware', () => {
     expect(res.body.message).to.include('Invalid or expired token');
   });
 
+  it('should reject request with a JWT missing the id claim', async () => {
+    const noIdToken = jwt.sign({ jti: 'no-id-jti' }, JWT_SECRET, {
+      expiresIn: '1h',
+    });
+
+    const res = await request(app)
+      .get('/api/notes')
+      .set('Authorization', `Bearer ${noIdToken}`);
+
+    expect(res.status).to.equal(401);
+    expect(res.body.message).to.equal('Invalid or expired token.');
+  });
+
   it('should reject request with a revoked token', async () => {
     const loginRes = await request(app)
       .post('/api/auth/login')

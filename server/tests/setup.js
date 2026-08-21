@@ -8,11 +8,17 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 config();
 config({ path: join(__dirname, '..', '.env.test'), override: true });
 
+const TEST_DB_NAME = 'notes_app_test';
+
+if (process.env.DB_NAME && process.env.DB_NAME !== TEST_DB_NAME) {
+  throw new Error(
+    `Refusing to run tests against database "${process.env.DB_NAME}"`
+  );
+}
+
+process.env.DB_NAME = TEST_DB_NAME;
 process.env.NODE_ENV = 'test';
 process.env.LOG_LEVEL = process.env.LOG_LEVEL || 'silent';
-if (!process.env.DB_NAME || process.env.DB_NAME === 'notes_app') {
-  process.env.DB_NAME = 'notes_app_test';
-}
 
 const schemaSQL = readFileSync(
   join(__dirname, '..', 'src', 'database', 'schema.sql'),
