@@ -22,7 +22,8 @@ export async function authenticate(req, res, next) {
   }
 
   if (typeof payload.jti !== 'string' || payload.jti.trim() === '' ||
-      typeof payload.exp !== 'number' || !isFinite(payload.exp)) {
+      typeof payload.exp !== 'number' || !isFinite(payload.exp) ||
+      !Number.isInteger(payload.id) || payload.id <= 0) {
     logger.warn({ method: req.method, url: req.url }, 'Authentication failed: invalid token payload.');
     return res.status(401).json({ message: 'Invalid or expired token.' });
   }
