@@ -22,7 +22,14 @@ try {
   `);
 
   logger.info('revoked_tokens table ready.');
+} catch (err) {
+  logger.error({ err }, 'Failed to initialize revoked_tokens table.');
+  process.exitCode = 1;
 } finally {
-  await pool.end();
+  try {
+    await pool.end();
+  } catch (err) {
+    logger.error({ err }, 'Failed to close database pool after migration.');
+    process.exitCode = 1;
+  }
 }
-

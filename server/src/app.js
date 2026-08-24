@@ -2,6 +2,7 @@ import express from 'express';
 import authRouter from './routes/auth.routes.js';
 import notesRouter from './routes/notes.routes.js';
 import requestLogger from './middleware/requestLogger.js';
+import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
 
@@ -18,5 +19,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRouter);
 app.use('/api/notes', notesRouter);
+
+app.use(errorHandler);
 
 export default app;
