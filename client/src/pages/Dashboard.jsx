@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NoteCard from '../components/NoteCard';
-import Header from '../components/Header';
+import Sidebar from '../components/Sidebar';
 import { getNotes, saveNotes } from '../utils/storage';
 
 const Dashboard = () => {
@@ -10,7 +10,6 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-
     const fetchNotes = async () => {
       try {
         const savedNotes = getNotes();
@@ -24,7 +23,6 @@ const Dashboard = () => {
         setIsLoading(false);
       }
     };
-
     fetchNotes();
   }, []);
 
@@ -43,43 +41,49 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="font-body-md text-body-md text-on-background antialiased flex h-screen overflow-hidden bg-[#fbf8fb]">
-      <div className="flex-1 flex flex-col w-full">
-        <Header>
-          <button onClick={handleCreateNote} className="bg-primary-container text-on-primary font-label-md text-label-md py-sm px-md rounded-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-sm">
-            <span className="material-symbols-outlined text-[18px]">add</span>
-            New Note
-          </button>
-        </Header>
-
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 max-w-[1200px] mx-auto w-full">
-          <div className="mb-xl flex justify-between items-start md:items-center">
+    <div className="font-body-md text-on-surface antialiased flex h-screen overflow-hidden bg-background">
+      <Sidebar />
+      <div className="flex-1 flex flex-col w-full ml-64">
+        <main className="flex-1 overflow-y-auto p-8 md:p-12 max-w-[1400px] mx-auto w-full">
+          <div className="mb-12 flex justify-between items-end border-b border-outline/30 pb-6">
             <div>
-              <h2 className="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-xs">All Notes</h2>
-              <p className="font-body-md text-body-md text-on-surface-variant">Your complete collection of thoughts and drafts.</p>
+              <div className="flex items-center gap-3 mb-2">
+                <span className="material-symbols-outlined text-primary text-3xl">auto_awesome_mosaic</span>
+                <h1 className="font-headline-lg text-4xl font-extrabold text-on-surface tracking-tight">All Notes</h1>
+              </div>
+              <p className="font-body-md text-on-surface-variant text-lg">Manage and organize your thoughts seamlessly.</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="flex items-center gap-2 text-sm font-semibold text-primary bg-primary/10 border border-primary/20 px-4 py-2 rounded-full shadow-subtle">
+                <span className="material-symbols-outlined text-[18px]">library_books</span>
+                {notes.length} {notes.length === 1 ? 'note' : 'notes'}
+              </span>
             </div>
           </div>
-          
+
           {isLoading ? (
-            <p className="text-on-surface-variant">Loading notes...</p>
+            <div className="flex items-center justify-center py-20 text-on-surface-variant">
+              <p>Loading your notes...</p>
+            </div>
           ) : notes.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-outline-variant rounded-lg">
-              <span className="material-symbols-outlined text-[48px] text-outline-variant mb-4">note_stack</span>
-              <p className="text-on-surface-variant mb-6 font-body-md">No notes found. Create one to get started!</p>
-              <button 
-                onClick={handleCreateNote} 
-                className="bg-primary-container text-on-primary font-label-md text-label-md py-sm px-lg rounded-sm hover:opacity-90 transition-opacity"
+            <div className="flex flex-col items-center justify-center py-32 text-center">
+              <span className="material-symbols-outlined text-[64px] text-outline mb-6">description</span>
+              <h3 className="font-headline-lg-mobile text-on-surface mb-2">No notes yet</h3>
+              <p className="text-on-surface-variant mb-8 max-w-md">Get started by creating your first note. It will be safely stored locally.</p>
+              <button
+                onClick={handleCreateNote}
+                className="bg-primary text-on-primary font-label-md py-3 px-8 rounded-editorial hover:bg-primary-hover active:scale-[0.98] transition-all shadow-subtle"
               >
-                Create Note
+                Create First Note
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-max">
               {notes.map((note) => (
-                <NoteCard 
-                  key={note.id} 
-                  note={note} 
-                  onClick={() => handleEditNote(note.id)} 
+                <NoteCard
+                  key={note.id}
+                  note={note}
+                  onClick={() => handleEditNote(note.id)}
                   onDelete={handleDeleteNote}
                 />
               ))}
