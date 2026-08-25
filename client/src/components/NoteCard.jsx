@@ -1,13 +1,21 @@
 function stripHtml(html) {
-  const tmp = document.createElement('div');
-  tmp.innerHTML = html;
-  return tmp.textContent || tmp.innerText || '';
+  if (!html) return '';
+  try {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || '';
+  } catch {
+    return '';
+  }
 }
 
 function formatDate(isoString) {
   if (!isoString) return '';
   try {
-    return new Date(isoString).toLocaleDateString(undefined, {
+    const date = new Date(isoString);
+    if (Number.isNaN(date.getTime())) {
+      return isoString;
+    }
+    return date.toLocaleDateString(undefined, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',

@@ -35,13 +35,26 @@ export default function Signup() {
 
     try {
       await registerUser({ name, email, password });
+    } catch (err) {
+      setError(err.message || 'Registration failed. Please try again.');
+      setIsLoading(false);
+      return;
+    }
 
-
+    try {
       const { token, user } = await loginUser({ email, password });
+      
+      if (!token || typeof token !== 'string') {
+        throw new Error('Received invalid authentication token.');
+      }
+      if (!user || typeof user !== 'object') {
+        throw new Error('Received invalid user data.');
+      }
+
       login(token, user);
       navigate('/dashboard', { replace: true });
     } catch (err) {
-      setError(err.message || 'Registration failed. Please try again.');
+      setError('Account created successfully, but automatic login failed. Please sign in.');
     } finally {
       setIsLoading(false);
     }

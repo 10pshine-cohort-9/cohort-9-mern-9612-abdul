@@ -44,13 +44,40 @@ const Dashboard = () => {
   };
 
   const handleDeleteNote = async (noteId) => {
-    const original = notes;
+    const noteToRestore = notes.find((n) => n.id === noteId);
+    const originalIndex = notes.findIndex((n) => n.id === noteId);
+
+    if (!noteToRestore) return;
+
+    const prevNoteId = originalIndex > 0 ? notes[originalIndex - 1].id : null;
+    const nextNoteId = originalIndex < notes.length - 1 ? notes[originalIndex + 1].id : null;
+
     setNotes((prev) => prev.filter((n) => n.id !== noteId));
 
     try {
       await deleteNote(noteId);
     } catch (err) {
-      setNotes(original);
+      setNotes((prev) => {
+        if (prev.some((n) => n.id === noteId)) return prev;
+        
+        const newNotes = [...prev];
+        let insertIndex = -1;
+
+        if (nextNoteId) {
+          insertIndex = newNotes.findIndex((n) => n.id === nextNoteId);
+        }
+        if (insertIndex === -1 && prevNoteId) {
+          const prevIndex = newNotes.findIndex((n) => n.id === prevNoteId);
+          if (prevIndex !== -1) insertIndex = prevIndex + 1;
+        }
+        if (insertIndex === -1) {
+          insertIndex = Math.min(originalIndex, newNotes.length);
+        }
+
+        newNotes.splice(insertIndex, 0, noteToRestore);
+        return newNotes;
+      });
+      
       if (err.status === 401) {
         logout();
         navigate('/login', { replace: true });

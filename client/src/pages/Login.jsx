@@ -22,6 +22,14 @@ export default function Login() {
     setIsLoading(true);
     try {
       const { token, user } = await loginUser({ email, password });
+      
+      if (!token || typeof token !== 'string') {
+        throw new Error('Received invalid authentication token.');
+      }
+      if (!user || typeof user !== 'object') {
+        throw new Error('Received invalid user data.');
+      }
+
       login(token, user);
       navigate('/dashboard', { replace: true });
     } catch (err) {
