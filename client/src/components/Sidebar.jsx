@@ -1,20 +1,27 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { logoutUser } from '../services/authService';
 
 const Sidebar = ({ children }) => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const handleCreateNote = () => {
     navigate('/notes/new');
   };
 
-  const handleLogout = () => {
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } catch {
+    } finally {
+      logout();
+      navigate('/login', { replace: true });
+    }
   };
 
   return (
     <aside className="fixed inset-y-0 left-0 w-64 bg-sidebar/95 backdrop-blur-xl text-sidebar-text flex flex-col border-r border-sidebar-border/50 z-50">
-      {/* App Branding */}
       <button 
         onClick={() => navigate('/dashboard')}
         className="h-20 flex items-center px-6 border-b border-sidebar-border/50 hover:bg-sidebar-hover/30 transition-colors focus:outline-none"
@@ -27,7 +34,6 @@ const Sidebar = ({ children }) => {
         </div>
       </button>
 
-      {/* Main Actions */}
       <div className="px-5 py-8 flex-1">
         <button 
           onClick={handleCreateNote}
@@ -38,14 +44,12 @@ const Sidebar = ({ children }) => {
         </button>
       </div>
 
-      {/* Page Specific Context (Passed via Children, e.g. Save/Cancel buttons) */}
       {children && (
         <div className="px-5 py-4 flex flex-col gap-3">
           {children}
         </div>
       )}
 
-      {/* Footer Actions (Logout & Profile) */}
       <div className="p-4 border-t border-sidebar-border/50 bg-sidebar-hover/10 flex flex-col gap-2">
         <button
           onClick={handleLogout}

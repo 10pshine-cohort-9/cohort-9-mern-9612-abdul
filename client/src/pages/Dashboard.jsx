@@ -1,30 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import NoteCard from '../components/NoteCard';
 import Sidebar from '../components/Sidebar';
-import { getNotes, saveNotes } from '../utils/storage';
+import { fetchNotes, deleteNote } from '../services/notesService';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
+
   const [notes, setNotes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const loadNotes = useCallback(async () => {
+    setIsLoading(true);
+    setError('');
+    try {
+      const data = await fetchNotes();
+      setNotes(data);
+    } catch (err) {
+      if (err.status === 401) {
+        logout();
+        navigate('/login', { replace: true });
+      } else {
+        setError(err.message || 'Failed to load notes.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [logout, navigate]);
 
   useEffect(() => {
-    const fetchNotes = async () => {
-      try {
-        const savedNotes = getNotes();
-        setNotes(savedNotes);
-        if (savedNotes.length === 0) {
-          saveNotes([]);
-        }
-      } catch (error) {
-        console.error('Failed to fetch notes', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchNotes();
-  }, []);
+    loadNotes();
+  }, [loadNotes]);
 
   const handleCreateNote = () => {
     navigate('/notes/new');
@@ -34,10 +43,21 @@ const Dashboard = () => {
     navigate(`/notes/${noteId}/edit`);
   };
 
-  const handleDeleteNote = (noteId) => {
-    const updatedNotes = notes.filter(n => n.id !== noteId);
-    setNotes(updatedNotes);
-    saveNotes(updatedNotes);
+  const handleDeleteNote = async (noteId) => {
+    const original = notes;
+    setNotes((prev) => prev.filter((n) => n.id !== noteId));
+
+    try {
+      await deleteNote(noteId);
+    } catch (err) {
+      setNotes(original);
+      if (err.status === 401) {
+        logout();
+        navigate('/login', { replace: true });
+      } else {
+        setError(err.message || 'Failed to delete note.');
+      }
+    }
   };
 
   return (
@@ -61,15 +81,22 @@ const Dashboard = () => {
             </div>
           </div>
 
+          {error && (
+            <div className="mb-8 flex items-center gap-2 px-4 py-3 bg-danger/10 border border-danger/30 rounded-editorial text-danger font-label-sm" role="alert">
+              <span className="material-symbols-outlined text-[16px] shrink-0">error</span>
+              <p>{error}</p>
+            </div>
+          )}
+
           {isLoading ? (
-            <div className="flex items-center justify-center py-20 text-on-surface-variant">
-              <p>Loading your notes...</p>
+            <div className="flex items-center justify-center py-20">
+              <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
             </div>
           ) : notes.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-32 text-center">
+            <div className="w-full flex flex-col items-center justify-center py-32 text-center">
               <span className="material-symbols-outlined text-[64px] text-outline mb-6">description</span>
               <h3 className="font-headline-lg-mobile text-on-surface mb-2">No notes yet</h3>
-              <p className="text-on-surface-variant mb-8 max-w-md">Get started by creating your first note. It will be safely stored locally.</p>
+              <p className="text-on-surface-variant mb-8 whitespace-nowrap">Get started by creating your first note.</p>
               <button
                 onClick={handleCreateNote}
                 className="bg-primary text-on-primary font-label-md py-3 px-8 rounded-editorial hover:bg-primary-hover active:scale-[0.98] transition-all shadow-subtle"

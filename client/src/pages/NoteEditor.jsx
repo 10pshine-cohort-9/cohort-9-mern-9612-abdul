@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Placeholder } from '@tiptap/extension-placeholder';
+import { useAuth } from '../context/AuthContext';
 import Sidebar from '../components/Sidebar';
-import { getNotes, saveNotes } from '../utils/storage';
+import { fetchNote, createNote, updateNote } from '../services/notesService';
 
 const ToolbarButton = ({ onClick, isActive, icon, title }) => (
   <button
@@ -79,10 +80,12 @@ const EditorToolbar = ({ editor }) => {
 const NoteEditor = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { logout } = useAuth();
   const isEditMode = Boolean(id);
 
   const [title, setTitle] = useState('');
-  const [error, setError] = useState('');
+  const [titleError, setTitleError] = useState('');
+  const [saveError, setSaveError] = useState('');
   const [isLoading, setIsLoading] = useState(isEditMode);
   const [notFound, setNotFound] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -104,65 +107,77 @@ const NoteEditor = () => {
       },
     },
     onTransaction: () => {
-      setEditorStateTick(tick => tick + 1);
+      setEditorStateTick((tick) => tick + 1);
     },
     onSelectionUpdate: () => {
-      setEditorStateTick(tick => tick + 1);
-    }
+      setEditorStateTick((tick) => tick + 1);
+    },
   });
 
   useEffect(() => {
     if (!isEditMode || !editor || editor.isDestroyed) return;
-    const savedNotes = getNotes();
-    const note = savedNotes.find(n => n.id === id);
-    if (note) {
-      setTitle(note.title);
-      editor.commands.setContent(note.content);
-    } else {
-      setNotFound(true);
-    }
-    setIsLoading(false);
-  }, [id, isEditMode, editor]);
 
-  const handleSave = () => {
+    let cancelled = false;
+
+    const loadNote = async () => {
+      try {
+        const note = await fetchNote(id);
+        if (cancelled) return;
+        setTitle(note.title);
+        editor.commands.setContent(note.content);
+      } catch (err) {
+        if (cancelled) return;
+        if (err.status === 404) {
+          setNotFound(true);
+        } else if (err.status === 401) {
+          logout();
+          navigate('/login', { replace: true });
+        } else {
+          setNotFound(true);
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
+
+    loadNote();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id, isEditMode, editor, logout, navigate]);
+
+  const handleSave = async () => {
     if (!title.trim()) {
-      setError('Please enter a title for your note.');
+      setTitleError('Please enter a title for your note.');
       return;
     }
-    
-    setIsSaving(true);
-    
-    // Simulate a slight delay for premium feel of saving
-    setTimeout(() => {
-      const data = {
-        title: title.trim(),
-        content: editor.getHTML(),
-        excerpt: editor.getText()
-      };
 
-      const savedNotes = getNotes();
-      
+    setSaveError('');
+    setIsSaving(true);
+
+    const payload = {
+      title: title.trim(),
+      content: editor.getHTML(),
+    };
+
+    try {
       if (isEditMode) {
-        const updatedNotes = savedNotes.map(n => 
-          n.id === id 
-            ? { ...n, title: data.title, content: data.content, excerpt: data.excerpt, updatedAt: 'just now' }
-            : n
-        );
-        saveNotes(updatedNotes);
+        await updateNote(id, payload);
       } else {
-        const newNote = {
-          id: Date.now().toString(),
-          title: data.title,
-          content: data.content,
-          excerpt: data.excerpt,
-          updatedAt: 'just now',
-          tags: []
-        };
-        saveNotes([newNote, ...savedNotes]);
+        await createNote(payload);
       }
-      
       navigate('/dashboard');
-    }, 400);
+    } catch (err) {
+      if (err.status === 401) {
+        logout();
+        navigate('/login', { replace: true });
+      } else {
+        setSaveError(err.message || 'Failed to save note. Please try again.');
+      }
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
@@ -209,7 +224,7 @@ const NoteEditor = () => {
 
       <div className="flex-1 flex flex-col w-full ml-64 relative">
         
-        {/* Sleek Top Navigation */}
+
         <header className="h-[72px] flex items-center justify-between px-8 md:px-12 border-b border-outline/10 bg-background/80 backdrop-blur-xl sticky top-0 z-40">
           <div className="flex items-center gap-6">
              <button 
@@ -238,11 +253,19 @@ const NoteEditor = () => {
           </button>
         </header>
 
-        {/* Editor Main Area */}
+
         <main className="flex-1 overflow-y-auto px-8 md:px-16 py-16 w-full flex flex-col items-center custom-scrollbar">
           <div className="max-w-[720px] w-full flex flex-col gap-8 pb-40">
             
-            {/* Title Input Area */}
+
+            {saveError && (
+              <div className="flex items-center gap-2 px-4 py-3 bg-danger/10 border border-danger/30 rounded-editorial text-danger font-label-sm" role="alert">
+                <span className="material-symbols-outlined text-[16px] shrink-0">error</span>
+                <p>{saveError}</p>
+              </div>
+            )}
+
+
             <div className="relative group flex flex-col gap-2">
               <input
                 id="note-title"
@@ -250,21 +273,22 @@ const NoteEditor = () => {
                 value={title}
                 onChange={(e) => {
                   setTitle(e.target.value);
-                  if (error) setError('');
+                  if (titleError) setTitleError('');
+                  if (saveError) setSaveError('');
                 }}
                 placeholder="Untitled Document"
-                className={`bg-transparent border-none outline-none font-headline-lg text-[42px] md:text-[54px] leading-[1.1] font-extrabold text-on-surface w-full placeholder:text-on-surface-variant/20 transition-all focus:ring-0 ${error ? 'text-danger' : ''}`}
+                className={`bg-transparent border-none outline-none font-headline-lg text-[42px] md:text-[54px] leading-[1.1] font-extrabold text-on-surface w-full placeholder:text-on-surface-variant/20 transition-all focus:ring-0 ${titleError ? 'text-danger' : ''}`}
                 style={{ padding: 0, boxShadow: 'none' }}
               />
-              {error && (
+              {titleError && (
                 <div className="flex items-center gap-2 text-danger mt-2 animate-fade-in">
                   <span className="material-symbols-outlined text-[16px]">error</span>
-                  <p className="font-label-sm">{error}</p>
+                  <p className="font-label-sm">{titleError}</p>
                 </div>
               )}
             </div>
 
-            {/* Editor Content */}
+
             <div className="flex flex-col relative group">
               <label className="sr-only" id="note-content-label">Content</label>
               <div className="border-none bg-transparent">
@@ -275,7 +299,7 @@ const NoteEditor = () => {
           </div>
         </main>
         
-        {/* Floating Centered Toolbar */}
+
         <EditorToolbar editor={editor} />
         
       </div>
