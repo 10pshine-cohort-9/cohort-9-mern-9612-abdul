@@ -30,8 +30,8 @@ export default function Signup() {
     setIsLoading(true);
 
     const form = e.currentTarget;
-    const name = form.fullName.value.trim();
-    const email = form.email.value.trim();
+    const name = form.elements.fullName.value.trim();
+    const email = form.elements.email.value.trim();
 
     try {
       await registerUser({ name, email, password });
@@ -53,7 +53,7 @@ export default function Signup() {
 
       login(token, user);
       navigate('/dashboard', { replace: true });
-    } catch (err) {
+    } catch {
       setError('Account created successfully, but automatic login failed. Please sign in.');
     } finally {
       setIsLoading(false);

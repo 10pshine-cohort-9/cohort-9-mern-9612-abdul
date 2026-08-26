@@ -13,7 +13,8 @@ const Sidebar = ({ children }) => {
   const handleLogout = async () => {
     try {
       await logoutUser();
-    } catch {
+    } catch (err) {
+      console.error('Logout failed:', err);
     } finally {
       logout();
       navigate('/login', { replace: true });
