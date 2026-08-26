@@ -18,7 +18,7 @@ const Dashboard = () => {
     setError('');
     try {
       const data = await fetchNotes();
-      setNotes(data);
+      setNotes(Array.isArray(data) ? data : []);
     } catch (err) {
       if (err.status === 401) {
         logout();

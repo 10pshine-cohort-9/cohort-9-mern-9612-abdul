@@ -133,7 +133,7 @@ const NoteEditor = () => {
           logout();
           navigate('/login', { replace: true });
         } else {
-          setNotFound(true);
+          setSaveError(err.message || 'Failed to load note. Please try again.');
         }
       } finally {
         if (!cancelled) setIsLoading(false);
