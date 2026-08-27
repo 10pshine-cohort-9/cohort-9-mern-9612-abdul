@@ -1,4 +1,29 @@
-import React from 'react';
+function stripHtml(html) {
+  if (!html) return '';
+  try {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || '';
+  } catch {
+    return '';
+  }
+}
+
+function formatDate(isoString) {
+  if (!isoString) return '';
+  try {
+    const date = new Date(isoString);
+    if (Number.isNaN(date.getTime())) {
+      return isoString;
+    }
+    return date.toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  } catch {
+    return isoString;
+  }
+}
 
 const NoteCard = ({ note, onClick, onDelete }) => {
   const handleKeyDown = (e) => {
@@ -8,6 +33,12 @@ const NoteCard = ({ note, onClick, onDelete }) => {
       onClick();
     }
   };
+
+  const excerpt = note.excerpt
+    ? note.excerpt
+    : stripHtml(note.content || '');
+
+  const displayDate = note.updatedAt || formatDate(note.updated_at);
 
   return (
     <div
@@ -37,13 +68,13 @@ const NoteCard = ({ note, onClick, onDelete }) => {
       </div>
       
       <p className="font-body-md text-[15px] text-on-surface-variant line-clamp-4 flex-1 mt-1 leading-[1.6]">
-        {note.excerpt || note.content}
+        {excerpt || '(no content)'}
       </p>
       
       <div className="flex items-center justify-between mt-auto pt-6 border-t border-outline/30">
         <span className="font-label-sm text-[13px] text-on-surface-variant/70 flex items-center gap-1.5 font-medium">
           <span className="material-symbols-outlined text-[16px]">calendar_today</span>
-          {note.updatedAt}
+          {displayDate}
         </span>
         <div className="flex gap-2 flex-wrap justify-end">
           {note.tags?.slice(0, 3).map(tag => (
