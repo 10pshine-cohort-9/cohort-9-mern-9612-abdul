@@ -86,12 +86,12 @@ export async function loginUser(email, password) {
 
   const user = await findUserByEmailWithPassword(normalizedEmail);
   if (!user) {
-    throw new AppError('Incorrect email.', 401);
+    throw new AppError('Invalid email or password.', 401);
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
-    throw new AppError('Incorrect password.', 401);
+    throw new AppError('Invalid email or password.', 401);
   }
 
   const jti = randomUUID();
