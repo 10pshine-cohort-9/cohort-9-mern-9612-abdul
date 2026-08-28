@@ -38,7 +38,7 @@ const NoteCard = ({ note, onClick, onDelete }) => {
     ? note.excerpt
     : stripHtml(note.content || '');
 
-  const displayDate = note.updatedAt || formatDate(note.updated_at);
+  const displayDate = formatDate(note.updatedAt || note.updated_at);
 
   return (
     <div

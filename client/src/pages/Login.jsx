@@ -16,8 +16,8 @@ export default function Login() {
     setError('');
 
     const form = event.currentTarget;
-    const email = form.email.value.trim();
-    const password = form.password.value;
+    const email = form.elements.email.value.trim();
+    const password = form.elements.password.value;
 
     setIsLoading(true);
     try {

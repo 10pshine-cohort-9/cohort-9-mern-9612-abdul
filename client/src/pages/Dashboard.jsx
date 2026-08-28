@@ -18,7 +18,7 @@ const Dashboard = () => {
     setError('');
     try {
       const data = await fetchNotes();
-      setNotes(data);
+      setNotes(Array.isArray(data) ? data : []);
     } catch (err) {
       if (err.status === 401) {
         logout();
@@ -32,6 +32,7 @@ const Dashboard = () => {
   }, [logout, navigate]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadNotes();
   }, [loadNotes]);
 
