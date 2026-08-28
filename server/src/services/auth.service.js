@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { findUserByEmail, findUserByEmailWithPassword, createUser } from '../models/user.model.js';
 import { jwtSecret, jwtExpiresIn } from '../config/jwt.js';
 import { revokeToken } from '../models/revoked_token.model.js';
+import { AppError } from '../errors/AppError.js';
 
 const SALT_ROUNDS = 10;
 const MIN_PASSWORD_LENGTH = 8;
@@ -50,18 +51,14 @@ function validateLoginInput(email, password) {
 export async function registerUser(name, email, password) {
   const validationError = validateRegistrationInput(name, email, password);
   if (validationError) {
-    const error = new Error(validationError);
-    error.status = 400;
-    throw error;
+    throw new AppError(validationError, 400);
   }
 
   const normalizedEmail = email.trim().toLowerCase();
 
   const existingUser = await findUserByEmail(normalizedEmail);
   if (existingUser) {
-    const error = new Error('An account with this email already exists.');
-    error.status = 409;
-    throw error;
+    throw new AppError('An account with this email already exists.', 409);
   }
 
   const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
@@ -71,11 +68,7 @@ export async function registerUser(name, email, password) {
     newUser = await createUser(name.trim(), normalizedEmail, hashedPassword);
   } catch (error) {
     if (error.code === '23505') {
-      const conflictError = new Error(
-        'An account with this email already exists.'
-      );
-      conflictError.status = 409;
-      throw conflictError;
+      throw new AppError('An account with this email already exists.', 409);
     }
     throw error;
   }
@@ -86,25 +79,19 @@ export async function registerUser(name, email, password) {
 export async function loginUser(email, password) {
   const validationError = validateLoginInput(email, password);
   if (validationError) {
-    const error = new Error(validationError);
-    error.status = 400;
-    throw error;
+    throw new AppError(validationError, 400);
   }
 
   const normalizedEmail = email.trim().toLowerCase();
 
   const user = await findUserByEmailWithPassword(normalizedEmail);
   if (!user) {
-    const error = new Error('Invalid email or password.');
-    error.status = 401;
-    throw error;
+    throw new AppError('Incorrect email.', 401);
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
-    const error = new Error('Invalid email or password.');
-    error.status = 401;
-    throw error;
+    throw new AppError('Incorrect password.', 401);
   }
 
   const jti = randomUUID();

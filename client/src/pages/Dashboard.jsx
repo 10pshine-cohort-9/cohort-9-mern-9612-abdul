@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import NoteCard from '../components/NoteCard';
 import Sidebar from '../components/Sidebar';
 import { fetchNotes, deleteNote } from '../services/notesService';
+import AnimatedBackground from '../components/AnimatedBackground';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -89,9 +90,10 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="font-body-md text-on-surface antialiased flex h-screen overflow-hidden bg-background">
+    <div className="font-body-md text-on-surface antialiased flex h-screen overflow-hidden bg-background relative">
+      <AnimatedBackground variant="dark" />
       <Sidebar />
-      <div className="flex-1 flex flex-col w-full ml-64">
+      <div className="flex-1 flex flex-col w-full ml-64 relative z-10">
         <main className="flex-1 overflow-y-auto p-8 md:p-12 max-w-[1400px] mx-auto w-full">
           <div className="mb-12 flex justify-between items-end border-b border-outline/30 pb-6">
             <div>

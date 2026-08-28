@@ -5,6 +5,7 @@ import StarterKit from '@tiptap/starter-kit';
 import { Placeholder } from '@tiptap/extension-placeholder';
 import { useAuth } from '../context/AuthContext';
 import Sidebar from '../components/Sidebar';
+import AnimatedBackground from '../components/AnimatedBackground';
 import { fetchNote, createNote, updateNote } from '../services/notesService';
 
 const ToolbarButton = ({ onClick, isActive, icon, title }) => (
@@ -13,11 +14,10 @@ const ToolbarButton = ({ onClick, isActive, icon, title }) => (
     onClick={onClick}
     title={title}
     aria-label={title}
-    className={`p-2 rounded-full transition-all duration-200 flex items-center justify-center ${
-      isActive
+    className={`p-2 rounded-full transition-all duration-200 flex items-center justify-center ${isActive
         ? 'bg-deep-space-blue text-white shadow-subtle scale-105'
         : 'text-on-surface-variant hover:bg-outline/20 hover:text-on-surface'
-    }`}
+      }`}
   >
     <span className="material-symbols-outlined text-[20px]">{icon}</span>
   </button>
@@ -201,7 +201,7 @@ const NoteEditor = () => {
         <Sidebar />
         <div className="flex-1 flex flex-col w-full ml-64 items-center justify-center gap-6">
           <div className="w-24 h-24 rounded-full bg-outline/10 flex items-center justify-center">
-             <span className="material-symbols-outlined text-[48px] text-on-surface-variant/50">search_off</span>
+            <span className="material-symbols-outlined text-[48px] text-on-surface-variant/50">search_off</span>
           </div>
           <div className="text-center">
             <h2 className="text-3xl font-bold text-on-surface mb-2 tracking-tight">Note not found</h2>
@@ -219,26 +219,27 @@ const NoteEditor = () => {
   }
 
   return (
-    <div className="font-body-md text-on-surface antialiased flex h-screen overflow-hidden bg-background">
+    <div className="font-body-md text-on-surface antialiased flex h-screen overflow-hidden bg-background relative">
+      <AnimatedBackground variant="dark" />
       <Sidebar />
 
-      <div className="flex-1 flex flex-col w-full ml-64 relative">
-        
+      <div className="flex-1 flex flex-col w-full ml-64 relative z-10">
+
 
         <header className="h-[72px] flex items-center justify-between px-8 md:px-12 border-b border-outline/10 bg-background/80 backdrop-blur-xl sticky top-0 z-40">
           <div className="flex items-center gap-6">
-             <button 
-               onClick={handleCancel} 
-               className="text-on-surface-variant hover:text-on-surface hover:bg-outline/10 p-2 -ml-2 rounded-full transition-all flex items-center gap-2 group"
-             >
-               <span className="material-symbols-outlined text-[22px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
-             </button>
-             <div className="h-4 w-px bg-outline/30"></div>
-             <span className="text-sm font-medium tracking-wide text-on-surface-variant/60 uppercase">
-               {isEditMode ? 'Editing Note' : 'Drafting Note'}
-             </span>
+            <button
+              onClick={handleCancel}
+              className="text-on-surface-variant hover:text-on-surface hover:bg-outline/10 p-2 -ml-2 rounded-full transition-all flex items-center gap-2 group"
+            >
+              <span className="material-symbols-outlined text-[22px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+            </button>
+            <div className="h-4 w-px bg-outline/30"></div>
+            <span className="text-sm font-medium tracking-wide text-on-surface-variant/60 uppercase">
+              {isEditMode ? 'Editing Note' : 'Drafting Note'}
+            </span>
           </div>
-          
+
           <button
             onClick={handleSave}
             disabled={isSaving}
@@ -256,7 +257,7 @@ const NoteEditor = () => {
 
         <main className="flex-1 overflow-y-auto px-8 md:px-16 py-16 w-full flex flex-col items-center custom-scrollbar">
           <div className="max-w-[720px] w-full flex flex-col gap-8 pb-40">
-            
+
 
             {saveError && (
               <div className="flex items-center gap-2 px-4 py-3 bg-danger/10 border border-danger/30 rounded-editorial text-danger font-label-sm" role="alert">
@@ -295,13 +296,13 @@ const NoteEditor = () => {
                 <EditorContent editor={editor} />
               </div>
             </div>
-            
+
           </div>
         </main>
-        
+
 
         <EditorToolbar editor={editor} />
-        
+
       </div>
     </div>
   );
