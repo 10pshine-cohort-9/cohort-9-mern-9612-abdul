@@ -2,12 +2,14 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { registerUser, loginUser } from '../services/authService';
+import AnimatedBackground from '../components/AnimatedBackground';
 
 export default function Signup() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -63,8 +65,12 @@ export default function Signup() {
   return (
     <div className="h-screen overflow-hidden flex antialiased font-body-md bg-background">
 
-      <div className="hidden lg:flex lg:w-1/2 lg:shrink-0 bg-sidebar flex-col items-center justify-center p-12 relative border-r border-sidebar-border/30">
-        <div className="flex flex-col items-center text-center w-full">
+      <div className="hidden lg:flex lg:w-1/2 lg:shrink-0 bg-sidebar flex-col items-center justify-center p-12 relative overflow-hidden border-r border-sidebar-border/30">
+        
+        {/* Animated Little Elements */}
+        <AnimatedBackground variant="light" />
+
+        <div className="flex flex-col items-center text-center w-full relative z-10">
           <div className="flex items-center justify-center gap-3 mb-10">
             <div className="w-12 h-12 rounded-editorial bg-primary flex items-center justify-center text-on-primary font-bold text-2xl shadow-subtle">
               S
@@ -86,7 +92,10 @@ export default function Signup() {
 
 
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 overflow-y-auto relative z-10 bg-background">
-        <main className="w-full max-w-[400px] flex flex-col py-8">
+        {/* Animated Little Elements (Dark) */}
+        <AnimatedBackground variant="dark" />
+
+        <main className="w-full max-w-[400px] flex flex-col py-8 relative z-10">
           <header className="flex flex-col mb-10">
             <h1 className="font-headline-lg text-4xl font-bold text-on-surface tracking-tight mb-2">Create an account</h1>
             <p className="font-body-md text-xl font-semibold text-on-surface-variant">Start your writing journey today.</p>
@@ -157,19 +166,31 @@ export default function Signup() {
             
             <div className="flex flex-col gap-2">
               <label className="font-label-md text-on-surface" htmlFor="confirmPassword">Confirm Password</label>
-              <input
-                className="w-full px-4 py-3 bg-surface border border-outline rounded-editorial font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all"
-                id="confirmPassword"
-                name="confirmPassword"
-                placeholder="••••••••"
-                required
-                type="password"
-                minLength={8}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                ref={confirmPasswordRef}
-                disabled={isLoading}
-              />
+              <div className="relative">
+                <input
+                  className="w-full px-4 py-3 pr-10 bg-surface border border-outline rounded-editorial font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  placeholder="••••••••"
+                  required
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  minLength={8}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  ref={confirmPasswordRef}
+                  disabled={isLoading}
+                />
+                <button
+                  aria-label="Toggle confirm password visibility"
+                  className="absolute inset-y-0 right-0 px-3 flex items-center text-on-surface-variant hover:text-on-surface transition-colors"
+                  type="button"
+                  onClick={() => setShowConfirmPassword((v) => !v)}
+                >
+                  <span className="material-symbols-outlined text-[18px]">
+                    {showConfirmPassword ? 'visibility' : 'visibility_off'}
+                  </span>
+                </button>
+              </div>
             </div>
             
             <div className="flex flex-col gap-3 mt-4">

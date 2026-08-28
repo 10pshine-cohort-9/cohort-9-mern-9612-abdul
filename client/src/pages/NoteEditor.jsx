@@ -5,6 +5,7 @@ import StarterKit from '@tiptap/starter-kit';
 import { Placeholder } from '@tiptap/extension-placeholder';
 import { useAuth } from '../context/AuthContext';
 import Sidebar from '../components/Sidebar';
+import AnimatedBackground from '../components/AnimatedBackground';
 import { fetchNote, createNote, updateNote } from '../services/notesService';
 
 const ToolbarButton = ({ onClick, isActive, icon, title }) => (
@@ -13,13 +14,12 @@ const ToolbarButton = ({ onClick, isActive, icon, title }) => (
     onClick={onClick}
     title={title}
     aria-label={title}
-    className={`p-2 rounded-full transition-all duration-200 flex items-center justify-center ${
-      isActive
+    className={`p-1.5 md:p-2 shrink-0 rounded-full transition-all duration-200 flex items-center justify-center ${isActive
         ? 'bg-deep-space-blue text-white shadow-subtle scale-105'
         : 'text-on-surface-variant hover:bg-outline/20 hover:text-on-surface'
-    }`}
+      }`}
   >
-    <span className="material-symbols-outlined text-[20px]">{icon}</span>
+    <span className="material-symbols-outlined text-[18px] md:text-[20px]">{icon}</span>
   </button>
 );
 
@@ -27,7 +27,7 @@ const EditorToolbar = ({ editor }) => {
   if (!editor) return null;
 
   return (
-    <div className="fixed bottom-10 left-[calc(50%+8rem)] -translate-x-1/2 flex items-center gap-1.5 px-3 py-2 bg-surface/80 backdrop-blur-xl border border-outline/30 rounded-full shadow-floating z-50 transition-all hover:bg-surface/95 hover:border-outline/50">
+    <div className="fixed bottom-6 md:bottom-10 left-1/2 md:left-[calc(50%+8rem)] -translate-x-1/2 flex items-center gap-1 md:gap-1.5 px-2 md:px-3 py-1.5 md:py-2 bg-surface/80 backdrop-blur-xl border border-outline/30 rounded-full shadow-floating z-50 transition-all hover:bg-surface/95 hover:border-outline/50 max-w-[95vw] md:max-w-max overflow-x-auto custom-scrollbar">
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleBold().run()}
         isActive={editor.isActive('bold')}
@@ -201,7 +201,7 @@ const NoteEditor = () => {
         <Sidebar />
         <div className="flex-1 flex flex-col w-full ml-64 items-center justify-center gap-6">
           <div className="w-24 h-24 rounded-full bg-outline/10 flex items-center justify-center">
-             <span className="material-symbols-outlined text-[48px] text-on-surface-variant/50">search_off</span>
+            <span className="material-symbols-outlined text-[48px] text-on-surface-variant/50">search_off</span>
           </div>
           <div className="text-center">
             <h2 className="text-3xl font-bold text-on-surface mb-2 tracking-tight">Note not found</h2>
@@ -219,44 +219,57 @@ const NoteEditor = () => {
   }
 
   return (
-    <div className="font-body-md text-on-surface antialiased flex h-screen overflow-hidden bg-background">
+    <div className="font-body-md text-on-surface antialiased flex h-screen overflow-hidden bg-background relative">
+      <AnimatedBackground variant="dark" />
       <Sidebar />
 
-      <div className="flex-1 flex flex-col w-full ml-64 relative">
-        
+      <div className="flex-1 flex flex-col w-full ml-0 md:ml-64 relative z-10 transition-all duration-300">
 
-        <header className="h-[72px] flex items-center justify-between px-8 md:px-12 border-b border-outline/10 bg-background/80 backdrop-blur-xl sticky top-0 z-40">
-          <div className="flex items-center gap-6">
-             <button 
-               onClick={handleCancel} 
-               className="text-on-surface-variant hover:text-on-surface hover:bg-outline/10 p-2 -ml-2 rounded-full transition-all flex items-center gap-2 group"
-             >
-               <span className="material-symbols-outlined text-[22px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
-             </button>
-             <div className="h-4 w-px bg-outline/30"></div>
-             <span className="text-sm font-medium tracking-wide text-on-surface-variant/60 uppercase">
-               {isEditMode ? 'Editing Note' : 'Drafting Note'}
-             </span>
+
+        <header className="h-[72px] flex items-center justify-between px-4 pl-16 md:px-12 border-b border-outline/10 bg-background/80 backdrop-blur-xl sticky top-0 z-40">
+          <div className="flex items-center gap-4 md:gap-6">
+            <button
+              onClick={handleCancel}
+              className="hidden md:flex text-on-surface-variant hover:text-on-surface hover:bg-outline/10 p-2 -ml-2 rounded-full transition-all items-center gap-2 group"
+            >
+              <span className="material-symbols-outlined text-[22px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+            </button>
+            <div className="hidden sm:block h-4 w-px bg-outline/30"></div>
+            <span className="hidden sm:inline-block text-sm font-medium tracking-wide text-on-surface-variant/60 uppercase">
+              {isEditMode ? 'Editing Note' : 'Drafting Note'}
+            </span>
           </div>
-          
-          <button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="bg-primary text-white font-label-md py-2.5 px-7 rounded-full hover:bg-primary-hover active:scale-[0.97] transition-all shadow-subtle flex items-center gap-2 disabled:opacity-70 disabled:active:scale-100"
-          >
-            {isSaving ? (
-              <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
-            ) : (
-              <span className="material-symbols-outlined text-[18px]">done</span>
-            )}
-            <span>{isSaving ? 'Saving...' : 'Save'}</span>
-          </button>
+
+          <div className="flex items-center gap-2">
+            {/* Mobile Back Button */}
+            <button
+              onClick={handleCancel}
+              className="md:hidden bg-outline/10 text-on-surface font-label-md py-2 px-3 rounded-full hover:bg-outline/20 active:scale-[0.97] transition-all shadow-subtle flex items-center justify-center"
+              aria-label="Back"
+            >
+              <span className="material-symbols-outlined text-[20px]">arrow_back</span>
+            </button>
+
+            {/* Save Button */}
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="bg-primary text-white font-label-md py-2 px-5 md:py-2.5 md:px-7 rounded-full hover:bg-primary-hover active:scale-[0.97] transition-all shadow-subtle flex items-center gap-2 disabled:opacity-70 disabled:active:scale-100"
+            >
+              {isSaving ? (
+                <span className="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
+              ) : (
+                <span className="material-symbols-outlined text-[18px]">done</span>
+              )}
+              <span>{isSaving ? 'Saving...' : 'Save'}</span>
+            </button>
+          </div>
         </header>
 
 
-        <main className="flex-1 overflow-y-auto px-8 md:px-16 py-16 w-full flex flex-col items-center custom-scrollbar">
-          <div className="max-w-[720px] w-full flex flex-col gap-8 pb-40">
-            
+        <main className="flex-1 overflow-y-auto px-4 md:px-16 py-8 md:py-16 w-full flex flex-col items-center custom-scrollbar">
+          <div className="max-w-[720px] w-full flex flex-col gap-6 md:gap-8 pb-40">
+
 
             {saveError && (
               <div className="flex items-center gap-2 px-4 py-3 bg-danger/10 border border-danger/30 rounded-editorial text-danger font-label-sm" role="alert">
@@ -277,7 +290,7 @@ const NoteEditor = () => {
                   if (saveError) setSaveError('');
                 }}
                 placeholder="Untitled Document"
-                className={`bg-transparent border-none outline-none font-headline-lg text-[42px] md:text-[54px] leading-[1.1] font-extrabold text-on-surface w-full placeholder:text-on-surface-variant/20 transition-all focus:ring-0 ${titleError ? 'text-danger' : ''}`}
+                className={`bg-transparent border-none outline-none font-headline-lg text-3xl md:text-[54px] leading-[1.1] font-extrabold text-on-surface w-full placeholder:text-on-surface-variant/20 transition-all focus:ring-0 ${titleError ? 'text-danger' : ''}`}
                 style={{ padding: 0, boxShadow: 'none' }}
               />
               {titleError && (
@@ -295,13 +308,13 @@ const NoteEditor = () => {
                 <EditorContent editor={editor} />
               </div>
             </div>
-            
+
           </div>
         </main>
-        
+
 
         <EditorToolbar editor={editor} />
-        
+
       </div>
     </div>
   );

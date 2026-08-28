@@ -5,6 +5,7 @@ import {
   updateNoteByIdAndUser,
   deleteNoteByIdAndUser,
 } from '../models/note.model.js';
+import { AppError } from '../errors/AppError.js';
 
 const MAX_TITLE_LENGTH = 255;
 
@@ -24,9 +25,7 @@ function validateNoteInput(title, content) {
 function parseNoteId(rawId) {
   const id = Number(rawId);
   if (!Number.isInteger(id) || id < 1) {
-    const error = new Error('Note ID must be a positive integer.');
-    error.status = 400;
-    throw error;
+    throw new AppError('Note ID must be a positive integer.', 400);
   }
   return id;
 }
@@ -34,9 +33,7 @@ function parseNoteId(rawId) {
 export async function createNote(userId, title, content) {
   const validationError = validateNoteInput(title, content);
   if (validationError) {
-    const error = new Error(validationError);
-    error.status = 400;
-    throw error;
+    throw new AppError(validationError, 400);
   }
 
   return dbCreateNote(userId, title.trim(), content.trim());
@@ -51,9 +48,7 @@ export async function getNoteById(userId, rawId) {
 
   const note = await findNoteByIdAndUser(id, userId);
   if (!note) {
-    const error = new Error('Note not found.');
-    error.status = 404;
-    throw error;
+    throw new AppError('Note not found.', 404);
   }
 
   return note;
@@ -64,16 +59,12 @@ export async function updateNote(userId, rawId, title, content) {
 
   const validationError = validateNoteInput(title, content);
   if (validationError) {
-    const error = new Error(validationError);
-    error.status = 400;
-    throw error;
+    throw new AppError(validationError, 400);
   }
 
   const note = await updateNoteByIdAndUser(id, userId, title.trim(), content.trim());
   if (!note) {
-    const error = new Error('Note not found.');
-    error.status = 404;
-    throw error;
+    throw new AppError('Note not found.', 404);
   }
 
   return note;
@@ -84,8 +75,6 @@ export async function deleteNote(userId, rawId) {
 
   const deleted = await deleteNoteByIdAndUser(id, userId);
   if (!deleted) {
-    const error = new Error('Note not found.');
-    error.status = 404;
-    throw error;
+    throw new AppError('Note not found.', 404);
   }
 }

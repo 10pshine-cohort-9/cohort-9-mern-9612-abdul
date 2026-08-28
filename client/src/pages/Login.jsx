@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { loginUser } from '../services/authService';
+import AnimatedBackground from '../components/AnimatedBackground';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ export default function Login() {
     setIsLoading(true);
     try {
       const { token, user } = await loginUser({ email, password });
-      
+
       if (!token || typeof token !== 'string') {
         throw new Error('Received invalid authentication token.');
       }
@@ -42,8 +43,12 @@ export default function Login() {
   return (
     <div className="h-screen overflow-hidden flex antialiased font-body-md bg-background">
 
-      <div className="hidden lg:flex lg:w-1/2 lg:shrink-0 bg-sidebar flex-col items-center justify-center p-12 relative border-r border-sidebar-border/30">
-        <div className="flex flex-col items-center text-center w-full">
+      <div className="hidden lg:flex lg:w-1/2 lg:shrink-0 bg-sidebar flex-col items-center justify-center p-12 relative overflow-hidden border-r border-sidebar-border/30">
+        
+        {/* Animated Little Elements */}
+        <AnimatedBackground variant="light" />
+
+        <div className="flex flex-col items-center text-center w-full relative z-10">
           <div className="flex items-center justify-center gap-3 mb-10">
             <div className="w-12 h-12 rounded-editorial bg-primary flex items-center justify-center text-on-primary font-bold text-2xl shadow-subtle">
               S
@@ -52,7 +57,7 @@ export default function Login() {
               SHINE Notes
             </span>
           </div>
-                    
+
           <h2 className="font-headline-lg text-5xl font-bold leading-tight text-sidebar-text mb-6">
             Welcome back to your workspace.
           </h2>
@@ -65,7 +70,10 @@ export default function Login() {
 
 
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 relative z-10 bg-background overflow-y-auto">
-        <main className="w-full max-w-[400px] flex flex-col py-8">
+        {/* Animated Little Elements (Dark) */}
+        <AnimatedBackground variant="dark" />
+
+        <main className="w-full max-w-[400px] flex flex-col py-8 relative z-10">
           <header className="flex flex-col mb-10">
             <h1 className="font-headline-lg text-5xl font-bold text-on-surface tracking-tight mb-2">Welcome back</h1>
             <p className="font-body-md text-2xl font-semibold text-on-surface-variant">Sign in to your SHINE account</p>
