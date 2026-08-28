@@ -1,0 +1,4 @@
+.scannerwork/
+client/coverage/
+server/coverage/
+server/.nyc_output/
